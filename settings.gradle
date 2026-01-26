@@ -1,0 +1,4 @@
+rootProject.name = 'course-management'
+include 'modules:course-management-config'
+include 'modules:course-management-database-config'
+

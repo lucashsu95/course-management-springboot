@@ -1,0 +1,308 @@
+{
+    "info": {
+        "_postman_id": "c41b9922-1f17-4e8b-b739-956f9543f303",
+        "name": "course-management",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Student Management",
+            "item": [
+                {
+                    "name": "Get All Students",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{url}}/api/v1/students",
+                            "host": [
+                                "{{url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "students"
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": true,\n    \"errorCode\": \"\",\n    \"message\": \"查詢成功\",\n    \"data\": [\n        {\n            \"id\": \"11046001\",\n            \"name\": \"王小明\",\n            \"email\": \"xiaoming@example.com\"\n        },\n        {\n            \"id\": \"11046002\",\n            \"name\": \"甲小明\",\n            \"email\": \"apple@example.com\"\n        }\n    ]\n}"
+                        },
+                        {
+                            "name": "404 NotFound",
+                            "status": "Not Found",
+                            "code": 404,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": false,\n    \"errorCode\": \"NotFound\",\n    \"message\": \"找不到學生資料\",\n    \"data\": {}\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Create Student",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": \"11046101\",\n  \"name\": \"王小明\",\n  \"email\": \"xiaoming@example.com\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{url}}/api/v1/students",
+                            "host": [
+                                "{{url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "students"
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "201 Created",
+                            "status": "Created",
+                            "code": 201,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": true,\n    \"errorCode\": \"\",\n    \"message\": \"新增成功\",\n    \"data\": {}\n}"
+                        },
+                        {
+                            "name": "400 ValidationFailed",
+                            "status": "Bad Request",
+                            "code": 400,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": false,\n    \"errorCode\": \"ValidationFailed\",\n    \"message\": \"欄位驗證失敗或學號重複\",\n    \"data\": {}\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Student Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{url}}/api/v1/students/11046101/courses",
+                            "host": [
+                                "{{url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "students",
+                                "11046101",
+                                "courses"
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": true,\n    \"errorCode\": \"\",\n    \"message\": \"查詢成功\",\n    \"data\": [\n        {\n            \"courseId\": \"CS301\",\n            \"courseName\": \"作業系統\",\n            \"courseCredit\": 3,\n            \"grade\": 95,\n            \"remark\": \"期末表現優異\",\n            \"createDate\": \"2026-01-25T10:00:00\"\n        }\n    ]\n}"
+                        },
+                        {
+                            "name": "404 NotFound",
+                            "status": "Not Found",
+                            "code": 404,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": false,\n    \"errorCode\": \"NotFound\",\n    \"message\": \"找不到學生或其選課資料\",\n    \"data\": {}\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Update Enrollment (修改成績/備註)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"grade\": 95,\n  \"remark\": \"期末表現優異\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{url}}/api/v1/students/11046101/courses/CS301",
+                            "host": [
+                                "{{url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "students",
+                                "11046101",
+                                "courses",
+                                "CS301"
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": true,\n    \"errorCode\": \"\",\n    \"message\": \"修改成功\",\n    \"data\": {\n        \"studentId\": \"11046101\",\n        \"courseId\": \"CS301\",\n        \"grade\": 95,\n        \"remark\": \"期末表現優異\"\n    }\n}"
+                        },
+                        {
+                            "name": "404 NotFound",
+                            "status": "Not Found",
+                            "code": 404,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": false,\n    \"errorCode\": \"NotFound\",\n    \"message\": \"找不到學生或課程，或尚未選課\",\n    \"data\": {}\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Course Management",
+            "item": [
+                {
+                    "name": "Get All Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{url}}/api/v1/courses",
+                            "host": [
+                                "{{url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses"
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": true,\n    \"errorCode\": \"\",\n    \"message\": \"查詢成功\",\n    \"data\": [\n        {\n            \"id\": \"CS301\",\n            \"name\": \"作業系統\",\n            \"credit\": 3\n        }\n    ]\n}"
+                        },
+                        {
+                            "name": "404 NotFound",
+                            "status": "Not Found",
+                            "code": 404,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": false,\n    \"errorCode\": \"NotFound\",\n    \"message\": \"找不到課程資料\",\n    \"data\": {}\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Create Course",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": \"CS301\",\n  \"name\": \"作業系統\",\n  \"credit\": 3\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{url}}/api/v1/courses",
+                            "host": [
+                                "{{url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses"
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": true,\n    \"errorCode\": \"\",\n    \"message\": \"新增成功\",\n    \"data\": {\n        \"id\": \"CS301\",\n        \"name\": \"作業系統\",\n        \"credit\": 3\n    }\n}"
+                        },
+                        {
+                            "name": "400 MissingField",
+                            "status": "Bad Request",
+                            "code": 400,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": false,\n    \"errorCode\": \"MissingField\",\n    \"message\": \"缺少名稱欄位\",\n    \"data\": {}\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Enroll Student (選課)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"grade\": null,\n  \"remark\": \"一般選課\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{url}}/api/v1/courses/CS301/students/11046101",
+                            "host": [
+                                "{{url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses",
+                                "CS301",
+                                "students",
+                                "11046101"
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": true,\n    \"errorCode\": \"\",\n    \"message\": \"選課成功\",\n    \"data\": {\n        \"studentId\": \"11046101\",\n        \"courseId\": \"CS301\",\n        \"grade\": 0,\n        \"remark\": \"一般選課\",\n        \"createDate\": \"2026-01-25T10:00:00\"\n    }\n}"
+                        },
+                        {
+                            "name": "409 Conflict",
+                            "status": "Conflict",
+                            "code": 409,
+                            "_postman_previewlanguage": "json",
+                            "body": "{\n    \"result\": false,\n    \"errorCode\": \"Conflict\",\n    \"message\": \"學生已選修該課程，請勿重複選課\",\n    \"data\": {}\n}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        }
+    ]
+}
