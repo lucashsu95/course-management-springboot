@@ -31,7 +31,7 @@ import java.util.function.BiConsumer;
  */
 @Log4j2
 public class ResponseEntityBuilder {
-    private final ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
+    private ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
     private boolean success;
     private ProjectException ProjectException;
     private String message;
@@ -59,6 +59,11 @@ public class ResponseEntityBuilder {
     public static ResponseEntityBuilder error(@Nonnull ProjectException projectException) {
         log.error("發生錯誤！", projectException);
         return new ResponseEntityBuilder(projectException);
+    }
+
+    public ResponseEntityBuilder status(org.springframework.http.HttpStatus status) {
+        this.bodyBuilder = ResponseEntity.status(status);
+        return this;
     }
 
     public ResponseEntityBuilder result(boolean isSuccess) {
