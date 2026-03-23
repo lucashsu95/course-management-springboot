@@ -5,24 +5,25 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.InvalidPropertyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import tw.edu.ntub.birc.common.exception.ProjectException;
 import tw.edu.ntub.birc.common.exception.UnknownException;
 import tw.edu.ntub.birc.common.exception.date.ParseDateException;
-import tw.edu.ntub.imd.birc.coursemanagement.exception.ConvertPropertyException;
-import tw.edu.ntub.imd.birc.coursemanagement.exception.MethodNotSupportedException;
-import tw.edu.ntub.imd.birc.coursemanagement.exception.NullRequestBodyException;
-import tw.edu.ntub.imd.birc.coursemanagement.exception.RequiredParameterException;
+import tw.edu.ntub.imd.birc.coursemanagement.exception.*;
 import tw.edu.ntub.imd.birc.coursemanagement.exception.file.FileNotExistException;
 import tw.edu.ntub.imd.birc.coursemanagement.exception.file.UploadFileTooLargeException;
 import tw.edu.ntub.imd.birc.coursemanagement.exception.form.InvalidFormDateFormatException;
@@ -59,7 +60,7 @@ public class ExceptionHandleController {
         }
 
         // 2. 處理 Jackson 解析錯誤 (主要邏輯)
-        if (e.getCause() instanceof InvalidFormatException) {
+        if (rootCause instanceof InvalidFormatException) {
             InvalidFormatException ex = (InvalidFormatException) e.getCause();
             Class<?> targetType = ex.getTargetType();
             List<JsonMappingException.Reference> path = ex.getPath();
@@ -178,9 +179,61 @@ public class ExceptionHandleController {
         return ResponseEntityBuilder.error(new RequiredParameterException(e.getParameterName())).build();
     }
 
+
+    //    -------------- 報錯 --------------
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        FieldError error = e.getBindingResult().getFieldErrors().stream().findFirst().orElse(null);
+        String message;
+        if (error != null) {
+            message = error.getDefaultMessage();
+        } else {
+            message = "表單驗證錯誤";
+        }
+
+        return ResponseEntityBuilder
+                .error(new InvalidFormException(message))
+                .status(HttpStatus.BAD_REQUEST)
+                .build();
+    }
+
+
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<String> handleDuplicateException(DuplicateException e) {
+        return ResponseEntityBuilder.error(new DuplicateCreateException(e.getMessage()))
+                .message(e.getMessage())
+                .status(HttpStatus.CONFLICT)
+                .build();
+    }
+
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntityBuilder.error(new InvalidFormException(e.getMessage()))
+                .message(e.getMessage())
+                .status(HttpStatus.CONFLICT)
+                .build();
+    }
+
+    //    return -> 404
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
+        log.warn("查無資料", e);
+        return ResponseEntityBuilder.error(new NotFoundException())
+                .message(e.getMessage())
+                .status(HttpStatus.NOT_FOUND)
+                .build();
+    }
+
+    //    -------------- 報錯 --------------
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleUnknownException(Exception e) {
-        return ResponseEntityBuilder.error(new UnknownException(e)).build();
+        log.error("未知錯誤", e);
+
+        return ResponseEntityBuilder
+                .error(new UnknownException(e))
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
     }
 }
 
