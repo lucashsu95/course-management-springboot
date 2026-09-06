@@ -3,6 +3,7 @@ package tw.edu.ntub.imd.birc.coursemanagement.util.http;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import tw.edu.ntub.birc.common.exception.ProjectException;
 import tw.edu.ntub.imd.birc.coursemanagement.util.function.TripleConsumer;
@@ -124,7 +125,9 @@ public class ResponseEntityBuilder {
     }
 
     public ResponseEntity<String> build() {
-        return bodyBuilder.body(buildJSONString());
+        return bodyBuilder
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(buildJSONString());
     }
 
     public String buildJSONString() {

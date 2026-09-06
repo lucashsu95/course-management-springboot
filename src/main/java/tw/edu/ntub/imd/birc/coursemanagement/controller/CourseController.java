@@ -15,6 +15,8 @@ import tw.edu.ntub.imd.birc.coursemanagement.util.json.object.ObjectData;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @AllArgsConstructor
 @RestController
@@ -62,7 +64,8 @@ public class CourseController {
                 .add("grade", result.getGrade())
                 .add("remark", result.getRemark())
                 .add("createDate", result.getCreateDate()
-                        .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+                        .atZone(ZoneId.of("Asia/Taipei"))
+                        .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
         return ResponseEntityBuilder.success()
                 .message("選課成功")

@@ -95,7 +95,7 @@ public class ExceptionHandleController {
             String displayName = fieldName; // 預設使用變數名
 
             // 嘗試透過反射獲取 @Schema 的中文描述 (加入 Snippet 1 的優勢)
-            if (!path.isEmpty()) {
+            if (!path.isEmpty() && !"grade".equals(fieldName)) {
                 Object fromObject = path.get(0).getFrom();
                 if (fromObject != null) {
                     // 呼叫下方提取出的輔助方法

@@ -21,8 +21,6 @@
 @rem
 @rem ##########################################################################
 
-set JAVA_HOME=D:\resourcepack\jdk-11.0.8
-
 @rem Set local scope for the variables with windows NT shell
 if "%OS%"=="Windows_NT" setlocal
 

@@ -14,6 +14,8 @@ import tw.edu.ntub.imd.birc.coursemanagement.util.http.ResponseEntityBuilder;
 import tw.edu.ntub.imd.birc.coursemanagement.util.json.object.ObjectData;
 
 import javax.validation.Valid;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.http.HttpStatus;
 
@@ -57,7 +59,8 @@ public class StudentController {
                     data.add("grade", bean.getGrade());
                     data.add("remark", bean.getRemark());
                     data.add("createDate", bean.getCreateDate()
-                            .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+                            .atZone(ZoneId.of("Asia/Taipei"))
+                            .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                 })
                 .build();
     }

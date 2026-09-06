@@ -145,7 +145,7 @@ GET `/api/v1/students/{id}/courses`
             "courseCredit": 3,
             "grade": null,
             "remark": null,
-            "createDate": "2026-01-28T23:30:32"
+            "createDate": "2026-01-28T23:30:32+08:00"
         },
         {
             "courseId": "CS202",
@@ -153,7 +153,7 @@ GET `/api/v1/students/{id}/courses`
             "courseCredit": 3,
             "grade": null,
             "remark": null,
-            "createDate": "2026-01-28T23:30:32"
+            "createDate": "2026-01-28T23:30:32+08:00"
         }
     ]
 }
@@ -364,7 +364,7 @@ POST `/api/v1/courses/{courseId}/students/{studentId}`
         "courseId": "CS301",
         "grade": 0,
         "remark": "一般選課",
-        "createDate": "2026-01-25T10:00:00"
+        "createDate": "2026-01-25T10:00:00+08:00"
     }
 }
 ```
