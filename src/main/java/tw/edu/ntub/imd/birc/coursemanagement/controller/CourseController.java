@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import tw.edu.ntub.imd.birc.coursemanagement.dto.CourseBean;
+import tw.edu.ntub.imd.birc.coursemanagement.dto.CreateCourseRecordRequest;
 import tw.edu.ntub.imd.birc.coursemanagement.dto.StudentCourseBean;
 import tw.edu.ntub.imd.birc.coursemanagement.service.CourseService;
 import tw.edu.ntub.imd.birc.coursemanagement.util.http.BindingResultUtils;
@@ -50,9 +51,11 @@ public class CourseController {
 
     @PostMapping("/{courseId}/students/{studentId}")
     public ResponseEntity<String> addStudent(@PathVariable String courseId,
-                                             @PathVariable String studentId,
-                                             @Valid @RequestBody UpdateCourseRecordRequest bean) {
-        StudentCourseBean result = courseService.updateCourseRecord(studentId, courseId, bean);
+            @PathVariable String studentId,
+            @Valid @RequestBody(required = false) CreateCourseRecordRequest bean,
+            BindingResult bindingResult) {
+        BindingResultUtils.validate(bindingResult);
+        StudentCourseBean result = courseService.addStudent(courseId, studentId, bean);
         ObjectData data = new ObjectData()
                 .add("studentId", result.getStudentId())
                 .add("courseId", result.getCourseId())
