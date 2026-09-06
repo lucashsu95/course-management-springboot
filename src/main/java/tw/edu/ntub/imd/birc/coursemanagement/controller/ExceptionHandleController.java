@@ -2,14 +2,12 @@ package tw.edu.ntub.imd.birc.coursemanagement.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.util.StringUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -39,7 +37,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Set;
-import java.lang.reflect.Field;
 
 @Log4j2
 @ControllerAdvice
@@ -91,20 +88,9 @@ public class ExceptionHandleController {
             List<JsonMappingException.Reference> path = ex.getPath();
 
             // A. 獲取欄位名稱與描述 (組裝邏輯)
-            String fieldName = path.isEmpty() ? "" : path.get(0).getFieldName();
-            String displayName = fieldName; // 預設使用變數名
-
-            // 嘗試透過反射獲取 @Schema 的中文描述 (加入 Snippet 1 的優勢)
-            if (!path.isEmpty() && !"grade".equals(fieldName)) {
-                Object fromObject = path.get(0).getFrom();
-                if (fromObject != null) {
-                    // 呼叫下方提取出的輔助方法
-                    String schemaDesc = getFieldDescription(fromObject.getClass(), fieldName);
-                    if (StringUtils.hasText(schemaDesc)) {
-                        displayName = schemaDesc; // 如果有中文描述，覆蓋變數名
-                    }
-                }
-            }
+            String displayName = path.isEmpty()
+                    ? "request"
+                    : path.get(path.size() - 1).getFieldName();
 
             // B. 根據目標類型構建錯誤訊息 (保持 Snippet 2 的 Enum 支援)
             boolean isNumberTarget = Number.class.isAssignableFrom(targetType) || targetType.isPrimitive();
@@ -135,29 +121,6 @@ public class ExceptionHandleController {
 
         // 3. 未知或 Body 為空
         return ResponseEntityBuilder.error(new NullRequestBodyException(e)).status(HttpStatus.BAD_REQUEST).build();
-    }
-
-    private String getFieldDescription(Class<?> clazz, String fieldName) {
-        Field declaredField = null;
-        Class<?> currentClass = clazz;
-
-        // 向上查找父類 (Inheritance support)
-        while (currentClass != null && declaredField == null) {
-            try {
-                declaredField = currentClass.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException ignored) {
-                currentClass = currentClass.getSuperclass();
-            }
-        }
-
-        if (declaredField != null) {
-            // 讀取 @Schema (User friendly support)
-            if (declaredField.isAnnotationPresent(Schema.class)) {
-                Schema schema = declaredField.getAnnotation(Schema.class);
-                return schema.description();
-            }
-        }
-        return null; // 沒找到或沒註解，回傳 null 讓主程式決定用 fieldName
     }
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
